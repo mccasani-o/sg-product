@@ -50,6 +50,13 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.17.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
 		<dependency>
 			<groupId>io.springfox</groupId>
@@ -142,7 +149,6 @@
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
 							<generatorName>spring</generatorName>
-							<apiPackage>com.nttdata.creditcards.api</apiPackage>
 							<modelPackage>com.nttdata.sgproduct.model</modelPackage>
 							<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
 							<configOptions>

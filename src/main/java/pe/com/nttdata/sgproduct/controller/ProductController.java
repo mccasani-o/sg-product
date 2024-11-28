@@ -22,14 +22,21 @@ public class ProductController {
     }
 
     @PostMapping
-    Mono<Void> insert(@RequestBody ProductRequest productRequest) {
-        return this.productService.insert(productRequest);
+    @ResponseStatus(HttpStatus.CREATED)
+    Mono<Void> createAccount(@RequestBody ProductRequest productRequest) {
+        return this.productService.createAccounts(productRequest);
     }
 
     @GetMapping
     Flux<ProductResponse> getAll() {
         return this.productService.getAllProduct();
     }
+
+    @GetMapping("/customer/{customerId}")
+    Flux<ProductResponse> searchProductsByCustomerId(@PathVariable String customerId) {
+        return this.productService.searchProductsByCustomerId(customerId);
+    }
+
 
     @GetMapping("/{id}")
     public Mono<ProductResponse> getById(@PathVariable String id) {

@@ -3,8 +3,11 @@ package pe.com.nttdata.sgproduct.webclient.impl;
 import lombok.extern.slf4j.Slf4j;
 import com.nttdata.sgproduct.model.CustomerResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import pe.com.nttdata.sgproduct.exception.CustomerException;
 import pe.com.nttdata.sgproduct.webclient.ApiWebClientCustomer;
 import reactor.core.publisher.Mono;
 
@@ -24,11 +27,24 @@ public class ApiWebClientCustomerImpl implements ApiWebClientCustomer {
     public Mono<CustomerResponse> findByClientId(String id) {
         return this.webClient.get()
                 .uri("/customers/{id}", id)
-
                 .retrieve()
-
-                .bodyToMono(CustomerResponse.class);
+                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    log.error("Client not found for ID: {}", id);
+                    return Mono.error(new CustomerException("Client not found", "404", HttpStatus.NOT_FOUND));
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                    log.error("Server error while retrieving client for ID: {}", id);
+                    return Mono.error(new CustomerException("Ocurrió un error en el servidor", "500", HttpStatus.INTERNAL_SERVER_ERROR));
+                })
+                .bodyToMono(CustomerResponse.class)
+                .doOnNext(customer ->
+                        log.info("Client retrieved successfully: {}", customer)
+                )
+                .doOnError(error ->
+                        log.error("Error retrieving client for ID {}: {}", id, error.getMessage())
+                );
     }
+
 
 
 

@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 public interface ProductService {
 
-    Mono<Void> insert(ProductRequest productRequest);
+    Mono<Void> createAccounts(ProductRequest productRequest);
 
     Flux<ProductResponse>getAllProduct();
 
@@ -16,5 +16,7 @@ public interface ProductService {
     Mono<Void> update(String id, ProductRequest productRequest);
 
     Mono<Void> delete(String id);
+
+    Flux<ProductResponse>searchProductsByCustomerId(String customId);
 
 }

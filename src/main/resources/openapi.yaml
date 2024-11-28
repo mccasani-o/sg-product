@@ -12,6 +12,29 @@ tags:
 servers:
   - url: http://localhost:8080/api/v1
 paths:
+  /products/{customId}:
+    get:
+      tags:
+        - products
+      summary: Get list of all products
+      parameters:
+        - name: customId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Client List
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductResponse'
+        '500':
+          description: Server error
+
   /products:
     get:
       tags:
@@ -28,6 +51,7 @@ paths:
                   $ref: '#/components/schemas/ProductResponse'
         '500':
           description: Server error
+
     post:
       tags:
         - products
@@ -144,10 +168,10 @@ components:
           type: string
           description: unique client id
         clientType:
-          type: number
+          type: string
           description: Client type
         documentType:
-          type: number
+          type: string
           description: Document type
         documentNumber:
           type: string
@@ -185,11 +209,18 @@ components:
       properties:
         productType:
           type: string
-          description: Tipo de producto (AHORRO, CORRIENTE, PLAZO_FIJO)
+          description: |
+            Tipo de producto financiero ofrecido por el banco. Cada tipo incluye una categoría y una descripción:
+            - **Pasivo**: Productos como cuentas bancarias.
+            - **Activo**: Productos como créditos y tarjetas.
           enum:
             - AHORRO
-            - CORRIENTE
+            - CUENTA_CORRIENTE
             - PLAZO_FIJO
+            - CREDITO_PERSONAL
+            - CREDITO_EMPRESARIAL
+            - TARJETA_CREDITO
+
         balance:
           type: number
           format: double
@@ -211,6 +242,5 @@ components:
           description: Code Error
         message:
           type: string
-          description: Message  
-        
-    
+          description: Message
+
