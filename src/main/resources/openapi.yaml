@@ -152,57 +152,14 @@ components:
           type: integer
           description: Límite de movimientos mensuales para cuentas de ahorro
         dayMovement:
-          type: integer
+          type: string
           description: Día de movimiento para cuentas a plazo fijo
-        customer:
-          $ref: '#/components/schemas/CustomerResponse'
-        movements:
-          type: array
-          items:
-            $ref: '#/components/schemas/ProductMovement'
-
-    CustomerResponse:
-      type: object
-      properties:
-        id:
+        customerId:
           type: string
-          description: unique client id
-        clientType:
+          description: Id cliente
+        movementId:
           type: string
-          description: Client type
-        documentType:
-          type: string
-          description: Document type
-        documentNumber:
-          type: string
-          description: Document number
-        name:
-          type: string
-          description: Names
-        lastName:
-          type: string
-          description: surnames
-        email:
-          type: string
-          description: Customer emeal
-
-    ProductMovement:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Id
-        movementType:
-          type: string
-          description: Tipo movimiento
-        amount:
-          type: number
-          format: double
-          description: Monto
-        date:
-          type: string
-          format: date
-          description: Fecha
+          description: Id movimiento
 
     ProductRequest:
       type: object
@@ -229,7 +186,7 @@ components:
           type: integer
           description: Límite de movimientos mensuales para cuentas de ahorro
         dayMovement:
-          type: integer
+          type: string
           description: Día de movimiento para cuentas a plazo fijo
         clientId:
           type: string

@@ -24,7 +24,7 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     Mono<Void> createAccount(@RequestBody ProductRequest productRequest) {
-        return this.productService.createAccounts(productRequest);
+        return this.productService.createAccount(productRequest);
     }
 
     @GetMapping

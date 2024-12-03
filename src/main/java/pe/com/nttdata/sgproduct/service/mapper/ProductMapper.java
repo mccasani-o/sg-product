@@ -1,33 +1,36 @@
 package pe.com.nttdata.sgproduct.service.mapper;
 
-import com.nttdata.sgproduct.model.CustomerResponse;
 import com.nttdata.sgproduct.model.ProductRequest;
 import com.nttdata.sgproduct.model.ProductResponse;
 import org.springframework.stereotype.Component;
+import pe.com.nttdata.sgproduct.controller.DateUtil;
 import pe.com.nttdata.sgproduct.model.entity.Product;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class ProductMapper {
 
-    public ProductResponse toProductResponse(Product product, CustomerResponse customerRespons) {
+    public ProductResponse toProductResponse(Product product) {
         ProductResponse productResponse=new ProductResponse();
         productResponse.setId(product.getId());
         productResponse.setProductType(product.getProductType());
         productResponse.setBalance(product.getBalance());
         productResponse.setLimitMnthlyMovements(product.getLimitMnthlyMovements());
         productResponse.setDayMovement(product.getDayMovement());
-        productResponse.setCustomer(customerRespons);
+        productResponse.setCustomerId(product.getClientId());
 
         return productResponse;
     }
 
-    public Product toProduct(ProductRequest productRequest, CustomerResponse customerResponse) {
+    public Product toProduct(ProductRequest productRequest) {
         return Product.builder()
                 .productType(productRequest.getProductType().getValue())
                 .balance(productRequest.getBalance())
                 .limitMnthlyMovements(productRequest.getLimitMnthlyMovements())
                 .dayMovement(productRequest.getDayMovement())
-                .clientId(customerResponse.getId())
+                .clientId(productRequest.getClientId())
                 .build();
     }
 
@@ -37,7 +40,7 @@ public class ProductMapper {
                 .productType(productRequest.getProductType().getValue())
                 .balance(productRequest.getBalance())
                 .limitMnthlyMovements(productRequest.getLimitMnthlyMovements())
-                .dayMovement(productRequest.getDayMovement())
+                .dayMovement(DateUtil.localDateTimeToString())
                 .clientId(product.getClientId())
                 .build();
     }

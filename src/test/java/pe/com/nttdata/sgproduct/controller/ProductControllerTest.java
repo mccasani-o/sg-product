@@ -15,6 +15,7 @@ import pe.com.nttdata.sgproduct.util.UtilMock;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,14 +41,14 @@ class ProductControllerTest {
         productRequest=new ProductRequest();
         productRequest.setProductType(ProductRequest.ProductTypeEnum.AHORRO);
         productRequest.setBalance(100.0);
-        productRequest.setDayMovement(1);
+        productRequest.setDayMovement("27");
         productRequest.setLimitMnthlyMovements(1);
         productRequest.setClientId("333g445");
     }
 
     @Test
     void createAccount() {
-        when(this.productService.createAccounts(any(ProductRequest.class)))
+        when(this.productService.createAccount(any(ProductRequest.class)))
                 .thenReturn(Mono.empty());
 
         this.client.post().uri(URI)

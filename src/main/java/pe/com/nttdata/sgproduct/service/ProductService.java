@@ -7,7 +7,8 @@ import reactor.core.publisher.Mono;
 
 public interface ProductService {
 
-    Mono<Void> createAccounts(ProductRequest productRequest);
+    Mono<Void> createAccount(ProductRequest productRequest);
+    Mono<Void> creditAccount(ProductRequest productRequest);
 
     Flux<ProductResponse>getAllProduct();
 
