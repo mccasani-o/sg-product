@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 
 
 @Data
@@ -28,6 +28,6 @@ public class Product {
     private Integer limitMnthlyMovements;
 
     private String dayMovement;
-
+    private BigDecimal limitCredit;
     private String clientId;
 }

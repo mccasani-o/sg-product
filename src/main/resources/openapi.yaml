@@ -154,6 +154,9 @@ components:
         dayMovement:
           type: string
           description: Día de movimiento para cuentas a plazo fijo
+        limitCredit:
+          type: number
+          description: Limite de credito
         customerId:
           type: string
           description: Id cliente
@@ -188,6 +191,9 @@ components:
         dayMovement:
           type: string
           description: Día de movimiento para cuentas a plazo fijo
+        limitCredit:
+          type: number
+          description: Limite de credito
         clientId:
           type: string
           description: Id client

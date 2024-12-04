@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 import pe.com.nttdata.sgproduct.controller.DateUtil;
 import pe.com.nttdata.sgproduct.model.entity.Product;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 
 @Component
 public class ProductMapper {
@@ -19,6 +18,7 @@ public class ProductMapper {
         productResponse.setBalance(product.getBalance());
         productResponse.setLimitMnthlyMovements(product.getLimitMnthlyMovements());
         productResponse.setDayMovement(product.getDayMovement());
+        productResponse.setLimitCredit(product.getLimitCredit());
         productResponse.setCustomerId(product.getClientId());
 
         return productResponse;
@@ -31,6 +31,17 @@ public class ProductMapper {
                 .limitMnthlyMovements(productRequest.getLimitMnthlyMovements())
                 .dayMovement(productRequest.getDayMovement())
                 .clientId(productRequest.getClientId())
+                .build();
+    }
+
+    public Product toProductCredit(ProductRequest productRequest) {
+        return Product.builder()
+                .productType(productRequest.getProductType().getValue())
+                .balance(productRequest.getBalance())
+                .limitMnthlyMovements(productRequest.getLimitMnthlyMovements())
+                .dayMovement(productRequest.getDayMovement())
+                .clientId(productRequest.getClientId())
+                .limitCredit(productRequest.getLimitCredit())
                 .build();
     }
 

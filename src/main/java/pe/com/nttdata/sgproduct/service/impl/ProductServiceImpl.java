@@ -27,12 +27,16 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ApiWebClientCustomer webClientCustomer;
+    private final BankAccountManagement bankAccountManagement;
+    private final CreditProductManagement creditProductManagement;
     private final ProductMapper productMapper;
 
 
-    public ProductServiceImpl(ProductRepository productRepository, ApiWebClientCustomer webClientCustomer, ProductMapper productMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, ApiWebClientCustomer webClientCustomer, BankAccountManagement bankAccountManagement, CreditProductManagement creditProductManagement, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.webClientCustomer = webClientCustomer;
+        this.bankAccountManagement = bankAccountManagement;
+        this.creditProductManagement = creditProductManagement;
         this.productMapper = productMapper;
     }
 
@@ -44,13 +48,17 @@ public class ProductServiceImpl implements ProductService {
                     // BUSINESS =1 PERSONAL =2
                     switch (productRequest.getProductType().getValue()) {
                         case "AHORRO":
-                            return handleSaving(productRequest, customerDto);
+                            return this.bankAccountManagement.handleSaving(productRequest, customerDto);
 
                         case "CUENTA_CORRIENTE":
-                            return handleCurrentAccount(productRequest, customerDto);
+                            return this.bankAccountManagement.handleCurrentAccount(productRequest, customerDto);
 
                         case "PLAZO_FIJO":
-                            return handleFixedTerm(productRequest, customerDto);
+                            return this.bankAccountManagement.handleFixedTerm(productRequest, customerDto);
+                        case "CREDITO_PERSONAL":
+                            return this.creditProductManagement.handlePersonalCredit(productRequest, customerDto);
+                        case "CREDITO_EMPRESARIAL":
+                            return this.creditProductManagement.handleBusinessCredit(productRequest, customerDto);
                         default:
                             return Mono.error(new CustomerException("Tipo de producto no reconocido", "400", HttpStatus.BAD_REQUEST));
                     }
@@ -109,61 +117,6 @@ public class ProductServiceImpl implements ProductService {
 
     private Mono<CustomerDto> findByCustomerId(String id) {
         return this.webClientCustomer.findByClientId(id);
-    }
-
-
-    private Mono<Void> handleFixedTerm(ProductRequest productRequest, CustomerDto customerDto) {
-
-        if (NUMBER_ONE.equals(customerDto.getClientType())) {
-            return Mono.error(new CustomerException("Los clientes empresariales no pueden tener una cuenta a plazo fijo", "400", HttpStatus.BAD_REQUEST));
-        }
-        productRequest.setLimitMnthlyMovements(0);
-        productRequest.setDayMovement(DateUtil.localDateTimeToString());
-        return validateSingleAccount(productRequest);
-    }
-
-    private Mono<Void> handleCurrentAccount(ProductRequest productRequest, CustomerDto customerDto) {
-        // Cualquier cliente puede tener cuentas corrientes
-        // return this.productRepository.save(this.productMapper.toProduct(productRequest)).then();
-        if (NUMBER_ONE.equals(customerDto.getClientType())) {
-            return Mono.error(new CustomerException("Los clientes empresariales no pueden tener una cuenta de ahorro",
-                    "400",
-                    HttpStatus.BAD_REQUEST));
-        }
-        productRequest.setLimitMnthlyMovements(100);
-        return validateSingleAccount(productRequest);
-
-    }
-
-    private Mono<Void> handleSaving(ProductRequest productRequest, CustomerDto customerDto) {
-
-        if (NUMBER_ONE.equals(customerDto.getClientType())) {
-            return Mono.error(new CustomerException("Los clientes empresariales no pueden tener una cuenta de ahorro",
-                    "400",
-                    HttpStatus.BAD_REQUEST));
-        }
-        productRequest.setLimitMnthlyMovements(100);
-        return validateSingleAccount(productRequest);
-    }
-
-    private Mono<Void> validateSingleAccount(ProductRequest productRequest) {
-        return this.productRepository.findByClientId(productRequest.getClientId())
-                .flatMap(existingProduct ->
-                        this.productRepository.findByProductTypeAndClientId(existingProduct.getProductType(), existingProduct.getClientId())
-                                .flatMap(product -> {
-                                    // Lanza una excepción si el tipo de producto ya existe
-                                    if (product.getProductType().equals(productRequest.getProductType().getValue())) {
-                                        return Mono.error(new CustomerException(
-                                                "El cliente ya tiene un producto de este tipo.",
-                                                "400",
-                                                HttpStatus.BAD_REQUEST
-                                        ));
-                                    }
-                                    return Mono.empty();
-                                })
-                )
-                .switchIfEmpty(this.productRepository.save(this.productMapper.toProduct(productRequest)))
-                .then();
     }
 
 }
